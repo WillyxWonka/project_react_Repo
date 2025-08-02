@@ -1,0 +1,219 @@
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+
+  margin: 0;
+  padding: 0;
+  background-color: peachpuff;
+}
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+*
+{
+  text-shadow: .00rem .005rem .08rem rgba(0, 0, 0, 0.75);
+  font-family:'Courier New', 'Courier', 'monospace';
+  box-sizing: border-box;
+}
+header
+{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0%;
+
+  z-index: 10;
+
+  box-shadow: 0em .25em .725em rgba(24, 29, 47, 0.75);
+  border: solid .125em rgba(0, 0, 0, 0.225);
+  background-color: rgba(51, 45, 36, .975);
+  padding: .25em 1.5em;
+}
+.header-children
+{
+  display: flex;
+  align-items: center;
+  color: rgb(0, 0, 0);
+  font-size: clamp(1rem, 1.125vw, 2.5rem);
+}
+.nav-btns-cont a , .nav-btns-cont a:visited
+{
+  color: rgba(255, 255, 255, 0.552);
+  display: inline-flex;
+  text-decoration: none !important;
+  white-space: nowrap;     /* Optional: forces text to stay on one line */
+}
+.nav-btns-cont
+{
+  margin-top: 1%;
+}
+
+.notes-page-navbar
+{
+  margin: 0 auto;
+  display: flex;
+}
+.notes-page-navbar *, a
+{
+  font-size: clamp(.5rem, 1vw, 2rem);
+}
+#cur-note-count, #user-icon{
+  position: relative;
+  margin-right:.5em;
+  border: solid .125em black;
+  background-color: rgb(229, 252, 255);
+  border-radius: .25em;
+  padding: .0125em .75em;
+  
+  display: flex;
+  align-items: center;
+  text-align: center; /* centers text horizontally */
+  color: rgb(22, 26, 31);
+}
+
+/* holds all cards and flexes based on card count*/
+.notes-cont
+{
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  padding: 2em 1em;
+  gap: .75em .75em;
+}
+.notes-card{
+}
+.note-pad
+{
+  transition: all ease-in-out .15s;
+  cursor: pointer;
+  
+  justify-content: center;
+  align-items: center;
+  
+  width: clamp(15vw, 20vw, 32vw);
+  height: clamp(17.5vw, 26vw, 35vw);
+  border-top: 1.5em solid black;
+  border-left: .15em solid black;
+  border-right: .1em solid black;
+  border-bottom: .1em solid black;
+  border-radius: .25em;
+
+  text-wrap: wrap;
+  padding: .5em;
+  font-size: clamp(1rem, 1.125vw, 1.5rem);
+  line-height: 1.125;
+
+  color: rgb(16, 20, 23);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(120, 214, 255, 0.25)), url("../images/notebookpaper.png");
+  box-shadow: -.125em .125em .25em rgb(41, 52, 75);/* Glow effect */
+}
+.note-pad:focus {
+  outline: none;
+  animation: none;
+  animation: pulse-border linear .4s;
+  border-color: rgb(156, 207, 243);
+}
+.note-pad:hover:not(:focus) {
+  outline: none;
+  animation: pulse-border-2 linear 1s infinite;
+  
+  transform: scale(1.0125);
+  box-shadow: -.35em .35em .5em rgb(41, 52, 75);/* Glow effect */
+}
+.note-pad:focus + .delete-btn, .delete-btn:active, button:active
+{
+  visibility: visible;
+}
+.delete-btn
+{
+  z-index: 3;
+  border-style: none !important;
+  background-color: rgb(85, 29, 29) !important;
+  display: flex;
+  position: relative;
+  visibility: hidden;
+  bottom: 95%;
+}
+
+@keyframes pulse-border-2 {
+  0% {
+    border-color: black;
+  }
+  50% {
+    border-color:rgb(70, 97, 117);
+  }
+  100% {
+    border-color: black;
+  }
+}
+
+@keyframes pulse-border {
+  0% {
+    border-color:rgb(70, 97, 117);
+  }
+  50% {
+    border-color: rgb(156, 207, 243);
+  }
+  100% {
+    border-color: rgb(156, 207, 243);
+  }
+}
+
+.nav-btn:hover:not(:active), a:hover:not(:active), .notes-card button:hover:not(:active)
+{
+  border-style: solid;
+  transition: ease-in-out .1s;
+  transform: scale(1.1);
+  background-color: rgb(113, 77, 0, .9);
+}
+.nav-btn:active , a:active, .notes-card button:active /*button:active*/
+{
+  text-shadow: none;
+  border-color: rgba(166, 237, 255, 0.5);
+  color: rgba(166, 237, 255, 0.75);
+  background-color: rgba(94, 116, 94, 0.85);
+  box-shadow: 0 0em .05em rgb(255, 238, 197);
+  transition: ease-in-out .075s;
+  transform: scale(.985);
+}
+.nav-btn, a, .notes-card button /*, button */
+{
+
+    border-width: clamp(0.075em, 0.2em, 0.25em);
+    border-radius: 1em;
+    text-decoration: none;
+
+    text-align: center;
+    color: rgb(234, 234, 234);
+
+    background-color:rgba(36, 64, 107, 0.75);
+    margin: .25em .25em;
+    padding: .25em .75em;
+    
+    border-color: rgba(0, 0, 0, 0.75);
+    border-style: solid;
+    border-width: .175em;
+    cursor: pointer;
+
+    z-index: 1;
+}
+
+
+@media screen and (orientation: portrait) 
+{
+.note-pad
+{
+  justify-self: center;
+  width: max-content;
+  height: max-content;
+}  
+}

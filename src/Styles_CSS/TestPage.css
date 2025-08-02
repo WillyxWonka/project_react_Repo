@@ -1,0 +1,152 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  margin: 0;
+  padding: 0;
+  background-color: #f6eee0;
+  background-image: url('../images/background.png');
+  
+}
+
+.TPTitles
+{
+  padding: 0em .5em;
+  font-weight: bold;
+}
+.Container
+{
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+  gap: .25em;
+  background-color:rgb(146, 151, 135, 1);
+  color: aliceblue;
+}
+
+p{
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    margin: .5em auto;
+    padding: .5em;
+
+    border: solid .125em black;
+    border-radius: .25em;
+    background-color:rgba(255, 255, 255, 0.762);
+}
+
+footer
+{
+    display: flex;
+    position: fixed;
+    bottom: 0%;
+}
+
+.form-and-output
+{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around; 
+  gap: 5em; 
+  padding: 1em;
+}
+.fake-form
+{
+    width: 140%;
+    height: clamp(15vw, 25vw, 35vw);
+
+    display: flex; 
+    justify-content: space-around;
+    align-items: center;
+    flex-Direction: column; 
+
+    padding: .75em; 
+    gap: .25em;
+    border: solid .125em black;
+    border-radius: .25em;
+
+    background-color: rgba(236, 246, 250, 0.804);
+    box-shadow: 0 0 .5em black;
+}
+.fake-form label
+{
+    text-shadow: none !important;
+    font-weight: 700;
+    width: 100%;
+    display: inline-flex;
+    height: 1.25em;
+    justify-content: space-between;
+    color: #656565;
+}
+#labeTxtArea
+{
+    height: clamp(15%, 30%, 50%);
+}
+textarea
+{
+    width: 70%;
+}
+.state-container
+{
+    width:50%;
+    display: grid;
+    grid-template-rows: auto auto auto;
+    grid-template-columns: auto auto auto auto;
+
+    gap: .5em;
+    padding: .125em .75em;
+}
+.state-card
+{
+    width: 100%;
+    padding: .75em;
+    box-shadow: 0 0 .5em black;
+    
+}
+input
+{
+    background-color: rgb(255, 255, 255);
+    border: solid .1em  #656565;
+    border-radius: .25em;
+    display: flex;
+    width: 50%;
+}
+.submit-button
+{
+    background-color: rgb(31, 56, 76);
+    color: rgba(255, 255, 255, 0.552);
+    font-size:medium;
+
+    border-color: black;
+    border-radius: .25em;
+    padding: .125em;
+
+    height: 2.25em;
+    width: 100%;
+    
+}
+.btn{
+    color: rgba(255, 255, 255, 0.552);
+    border-radius: .25em;
+    padding: .2em;
+}
+.submit-button:active, .btn:active{
+
+    border-color: rgba(166, 237, 255, 0.5);
+    color: rgba(166, 237, 255, 0.75);
+    background-color: rgba(94, 116, 94, 0.85);
+    box-shadow: 0 0em .05em rgb(255, 238, 197);
+    transition: ease-in-out .075s;
+    transform: scale(.985);
+}
+.submit-button:hover:not(:active), .btn:hover:not(:active)
+{
+    border-style: solid;
+    transition: ease-in-out .1s;
+    background-color: rgb(113, 77, 0, .9);
+}
