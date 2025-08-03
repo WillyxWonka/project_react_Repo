@@ -6,6 +6,7 @@ import NotesPage from "./Pages/NotesPage";
 import Words from "./Pages/Words";
 import MainPage from "./Pages/MainPage";
 import WordDecoder from "./Pages/WordDecoder";
+import WDButtons from "./Components/WDButtons";
 
 function App() {
   // Load notes from localStorage or default to two empty strings
@@ -28,6 +29,7 @@ function App() {
         <Route path="/Pages/Words" element={<Words />} />
         <Route path="/Pages/WordDecoder" element={<WordDecoder/>} />
       </Routes>
+
     </>
   );
 }

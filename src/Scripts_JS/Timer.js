@@ -1,4 +1,4 @@
-import * as GTP from "./GuessThePhrase.js";
+//import * as GTP from "./GuessThePhrase.js";
 
 let isTimer = false;
 let SecondsMax = 30
@@ -22,7 +22,7 @@ function FinalGuessTimeOut()
     if(seconds <= 0)
     {
         StopTimer();
-        GTP.GuessWrong();
+        //GTP.GuessWrong();
         console.log("seconds done: ");
         //GTP.checkTimer("Timer");
     }

@@ -2,132 +2,109 @@ import { useEffect, useState,useRef} from "react";
 import Header from "../Components/Page-Header";
 import '../Styles_CSS/WD.css';
 import * as GTP from '../Scripts_JS/GuessThePhrase.js';
-import GTP_Timer from "../Components/GTP_Timer.jsx";
-import wordBank from "../JSON/WordBank.json"
-import { searchWords } from "../Services/api.js";
+import WDButtons from "../Components/WDButtons.jsx";
+import * as gameConfig from '../Scripts_JS/gameConfig.js';
+
 
 function WordDecoder(){
-    let freeLetters = 5;
-    let Difficulty = 'Easy';
-    let TurnMax = 3;
+const {freeLetters, turnMax } = gameConfig.GAME_CONFIG;
+let Difficulty = 'Easy';
 
-    const [curAnswer, setCurAnswer] = useState([]);
-    const [buttonState, setButtonState] = useState({});
-
-    const [curGameState, setCurGameState] = useState("GAME"); //["GAME", "SELECTING", "GUESSING", "FINAL"]
-
-    const [selectedLetters, setSelectedLetters] = useState({}); // {button id : current className/tag}
-    const [unavailableLetters, setUnavailableLetters] = useState({});
-
-    const [alphabetState, setAlphabetState] = useState(GTP.alphabet); //letter buttons display // fix this 
-    const [TurnCount, setTurnCount] = useState(1);
-    //const {_word, _hint} = GTP.TestGenerateWord(); //currently separate from actually word
-    //const [word, setWord] = useState(() => GTP.GenerateWord());
-    const [word, setWord] = useState(GTP.TestGenerateWord);
-    const hasRun = useRef(false);
- 
+const [curAnswer, setCurAnswer] = useState([]);
+const [buttonState, setButtonState] = useState({});
+const [curGameState, setCurGameState] = useState("GAME"); //["GAME", "SELECTING", "GUESSING", "FINAL", RESET]
+const [selectedLetters, setSelectedLetters] = useState({}); // {button id : current className/tag}
+const [unavailableLetters, setUnavailableLetters] = useState({});
+const [alphabetState, setAlphabetState] = useState(GTP.alphabet); //letter buttons display // fix this 
+const [TurnCount, setTurnCount] = useState(turnMax);
+const [word, setWord] = useState(GTP.TestGenerateWord);
+const hasRun = useRef(false);
+const [curFinalGuess, setCurFinalGuess] = useState([]);
 const [hintVis, setHintVis] = useState(true);
 const [curHint, setCurHint] = useState("");//API Stuff
 
+function LetterClicked(e)
+{
+    setSelectedLetters((prev) =>({
+        ...prev, [e.target.id] : !prev[e.target.id]
+    })); 
+}
+function LetterClickedALT(e)
+{
+    setCurFinalGuess(() => [...curFinalGuess ,e.target.id].join("")); 
+}
+function SubmitFromGame(){
+    //adds current selected letters to unavailable
+    if(Object.keys(selectedLetters).length > 0){ 
+    setUnavailableLetters((prev) =>({
+        ...prev, ...selectedLetters
+    })); 
+    setSelectedLetters({});
+    }
+    setTurnCount(() => TurnCount-1);
+}
+function SubmitFromFinal(){
+
     
+}
 
-    async function Hint(){
-        const results = await searchWords(word.obj_word, "definitions"); // Call API
-        setCurHint(results); // Store API result in state
-        setHintVis(!hintVis);
-    };
-
-    function LetterClicked(e)
+//watches curGamestate and runs code on specific state
+useEffect(() => {
+    switch(curGameState)
     {
-        setSelectedLetters((prev) =>({
-            ...prev, [e.target.id] : !prev[e.target.id]
-        })); 
+        case "GAME":
+            setCurFinalGuess([]);
+            break;
+        case "FINAL":
+            //start timer
+            //turn off all but hint and submit buttons
+            break;
+        case "RESET":
+            //adjust css for correct or wrong
+            //turn off all buttons besides new word
+            break;
+
     }
-    function SubmitButton(){
-        //adds current selected letters to unavailable
-        if(Object.keys(selectedLetters).length > 0){ 
-        setUnavailableLetters((prev) =>({
-            ...prev, ...selectedLetters
-        })); 
-        setSelectedLetters({});
-        }
-        setTurnCount(() => TurnCount < TurnMax ? TurnCount+1 : TurnMax);
+}, [curGameState]); 
+//Watches SelectedLetters to switch State
+useEffect(() =>{
+}, [selectedLetters]);
+//disables button when added to unavailable state
+useEffect(() => {
+    setButtonState({
+        ...unavailableLetters  
+    });
+
+    setAlphabetState(
+        alphabetState.filter((letter) =>{
+            if(Object.keys(unavailableLetters).includes(letter))
+            {return false;}
+            else return true;
+    }));
+
+    setCurAnswer(GTP.updateanswer(unavailableLetters, word.obj_word, curAnswer)); 
+}, [unavailableLetters])
+//sets turncount
+useEffect(() => {
+    if(TurnCount === 0){
+        setTurnCount(0);
+        setCurGameState("FINAL");
+        return;
     }
+
     
-    function NewWord(){ 
-        setAlphabetState(GTP.alphabet);       
-        setSelectedLetters({});
-        setUnavailableLetters({});
-        setCurAnswer([]);
-        setTurnCount(1);
-
-        const tempWord =GTP.TestGenerateWord()
-        setWord(tempWord);
-        setUnavailableLetters(GTP.setLetters(freeLetters, GTP.alphabet));
-        setCurAnswer(GTP.SetAnswerField([], tempWord.obj_word));
+}, [TurnCount])
+//runs once at mount
+useEffect(() => {
+    if(!hasRun.current){
+        setUnavailableLetters(GTP.setLetters(freeLetters, alphabetState));
+        setCurAnswer(GTP.SetAnswerField(curAnswer, word.obj_word));
+        hasRun.current = true;
     }
-
-    function GuessWord(){
-
-        setCurGameState(() => curGameState === "GUESSING" ? "GAME" : "GUESSING");
-    }
-
-
-    //watches curGamestate and runs code on specific state
-    useEffect(() => {
-        switch(curGameState)
-        {
-            case "GAME":
-                break;
-            case "GUESSING":   
-                break;
-            case "SELECTING":
-                break;
-        }
-        //debugbtn();    
-    }, [curGameState]); 
-    //Watches SelectedLetters to switch State
-    useEffect(() =>{
-    }, [selectedLetters]);
-    //disables button when added to unavailable state
-    useEffect(() => {
-        setButtonState({
-            ...unavailableLetters  
-        });
-
-        setAlphabetState(
-            alphabetState.filter((letter) =>{
-                if(Object.keys(unavailableLetters).includes(letter))
-                {return false;}
-                else return true;
-        }));
-
-        setCurAnswer(GTP.updateanswer(unavailableLetters, word.obj_word, curAnswer)); 
-    }, [unavailableLetters])
-    //sets turncount
-    useEffect(() => {
-        if(TurnCount > TurnMax){
-            alert("Turncount max reached change state")
-        }
-    }, [TurnCount])
-    //runs once at mount
-    useEffect(() => {
-        if(!hasRun.current){
-            setUnavailableLetters(GTP.setLetters(freeLetters, alphabetState));
-            setCurAnswer(GTP.SetAnswerField(curAnswer, word.obj_word));
-            hasRun.current = true;
-        }
-    }, []);
+}, []);
 
     function debugbtn(){
-    alert(curAnswer + "  "+ word.obj_word)
-    //const {word, hint} = GTP.TestGenerateWord();
-    //alert(JSON.stringify(word + " : " + hint));
     }
-    /*const debugbtn = async () => {
-        const results = await searchWords(_word, hint); // Call API
-        setWords(results); // Store API result in state
-    };*/
     return(
     <>
         <Header> Standard Mode! </Header>
@@ -135,7 +112,7 @@ const [curHint, setCurHint] = useState("");//API Stuff
         <main>
 
             <div className="FinalGuessInputCont">
-                <div id = "FinalGuessInputFieldIndicator"></div>
+                <div id = "FinalGuessInputFieldIndicator">{curFinalGuess}</div>
             </div>
 
             <div id="Phrase">Guess the {word.obj_hint}, {word.obj_difficulty}</div>   
@@ -143,18 +120,18 @@ const [curHint, setCurHint] = useState("");//API Stuff
 
             <div id="" style={{textAlign: 'center'}}>
                 Test Unavailable Letters:{<span style={{color: 'goldenrod'}}>
-                    {Object.keys(unavailableLetters)}__{word.obj_word}___{alphabetState}
-                    
+                    {Object.keys(unavailableLetters)}__{word.obj_word}___{alphabetState}             
                 </span>}
                 </div>  
             
             <section className="core-game-space">
                 <fieldset className="LetterButtons" id="LetterButtons">
 
-                        <div id="LetterButtonsHeader"></div>
-                        <div id='Timer' aria-label="Timer">Timer</div>  
+                    <div id="LetterButtonsHeader"></div>
+                    <div id='Timer' aria-label="Timer">Timer</div>  
 
-                        {GTP.alphabet.map((letter, index) =>(
+                    {curGameState === "GAME" ? //this should theoretically work when FINAL gamestate is initiated
+                        GTP.alphabet.map((letter, index) =>(
                             <button 
                             key={index} 
                             type="button" 
@@ -164,36 +141,36 @@ const [curHint, setCurHint] = useState("");//API Stuff
                             id={GTP.alphabet[index]}
                             onClick={(e)=>{LetterClicked(e)}}
                             >{letter.toUpperCase()}</button>
-                        ))}
-                        
-                        <section className="main-buttons">
+                    )) :           
+                        GTP.alphabet.map((letter, index) =>(
+                            <button 
+                            key={index} 
+                            type="button" 
+                            className={['alphabetbtn','btn-unselected'].join(' ')}
+                            id={GTP.alphabet[index]}
+                            onClick={(e)=>{LetterClickedALT(e)}}
+                            >{letter.toUpperCase()}</button>
+                        ))  
+                    }   
 
-                            <button type="button" className="undo-btn" id="Undobtn"  aria-pressed="false" >Undo</button>
-                            <button type="button" className="submit-btn" id="Submitbtn" onClick={() => SubmitButton()}>Submit</button>
-                        </section>    
+                    <section className="main-buttons">
+                        <button type="button" className="undo-btn" id="Undobtn"  aria-pressed="false" >Undo</button>
+                        <button type="button" className="submit-btn" id="Submitbtn" onClick={curGameState === "GAME" ? 
+                        () => SubmitFromGame(): () => SubmitFromFinal()}>Submit</button>
+                    </section>    
+
                 </fieldset>
             </section>
-
-            <section className="secondary-buttons">
-                    <button className="guess-word-btn" id="guess-word-btn" 
-                    onClick={() => GuessWord()}
-                    disabled={curGameState === "SELECTING" ? true : false}>
-                        {curGameState ==="GUESSING" ? "Return" : "Guess Word" } </button>
-
-                    <button className="new-word-btn" id="new-word-btn" 
-                    onClick={() => NewWord()}>
-                         New Word</button>
-                    <button className="new-word-btn" id="new-word-btn" 
-                    onClick={() => Hint()}>
-                         Hint</button>
-                    <textarea value={curHint} disabled={hintVis}></textarea>
-            </section>
+            <WDButtons
+            word={word} curGameState={curGameState} setCurGameState={setCurGameState} curHint={curHint} setCurHint={setCurHint} hintVis={hintVis} 
+            setHintVis={setHintVis} setAlphabetState={setAlphabetState} setSelectedLetters={setSelectedLetters} setUnavailableLetters={setUnavailableLetters}
+            setCurAnswer={setCurAnswer} setTurnCount={setTurnCount} setWord={setWord} freeLetters={freeLetters} />
         </main>
         
         <aside aria-label="Game information, stats">
             <div className="game-info"> 
                 <div id='TurnsUsed' aria-label="Turns info">
-                    Turn: {TurnCount}/{TurnMax}
+                    Turns: {TurnCount}
                 </div>   
                 <div id='Points' aria-label="Points info">
                     Points: 0
@@ -215,32 +192,45 @@ const [curHint, setCurHint] = useState("");//API Stuff
 }
 export default WordDecoder;
 
-/*
 
-    function debugbtn(){
-        //alert(curGameState);
-       const newGameState = Object.fromEntries(
-        Object.keys(gameState).map(key => [key, key === "final"])
-        );
 
-        setGameState(newGameState);
-        const activeKey = Object.entries(gameState).find(([key, value])=> value === true)
-        setCurGameState(activeKey[0])
 
-        alert(JSON.stringify(gameState) + "  " + curGameState)
-        
-        //alert( Object.entries(gameState).find(([key, value]) =>(key === "selecting")
-        //));
+    /*
+    async function Hint(){
+    const results = await searchWords(word.obj_word, "definitions"); // Call API
+    setCurHint(results); // Store API result in state
+    setHintVis(!hintVis);
+    };
+    function NewWord(){ 
+        setAlphabetState(GTP.alphabet);       
+        setSelectedLetters({});
+        setUnavailableLetters({});
+        setCurAnswer([]);
+        setTurnCount(1);
+
+        const tempWord =GTP.TestGenerateWord()
+        setWord(tempWord);
+        setUnavailableLetters(GTP.setLetters(freeLetters, GTP.alphabet));
+        setCurAnswer(GTP.SetAnswerField([], tempWord.obj_word));
     }
+    function GuessWord(){
 
-*/
-//const [gameState, setGameState] = useState({"game": true, "selecting": false, "guessing":false, "final":false});  //["game", "letters-selected", "guessing-word", "final-guess"] this is what the magic number floating around the javascript file is referencing
-/*
-    //sets curGamestate when GameState is changed
-    useEffect(() => {
-    setCurGameState(() => {
-    const activeKey = Object.entries(gameState).find(([key, val]) => val === true);
-    return activeKey[0];
-    });
-    }, [gameState]);
+        setCurGameState(() => curGameState === "GUESSING" ? "GAME" : "GUESSING");
+    }
     */
+/*
+            <section className="secondary-buttons">
+                    <button className="guess-word-btn" id="guess-word-btn" 
+                    onClick={() => GuessWord()}
+                    disabled={curGameState === "SELECTING" ? true : false}>
+                        {curGameState ==="GUESSING" ? "Return" : "Guess Word" } </button>
+
+                    <button className="new-word-btn" id="new-word-btn" 
+                    onClick={() => NewWord()}>
+                         New Word</button>
+                    <button className="new-word-btn" id="new-word-btn" 
+                    onClick={() => Hint()}>
+                         Hint</button>
+                    <textarea value={curHint} disabled={hintVis}></textarea>
+            </section>
+*/
