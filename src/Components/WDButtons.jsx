@@ -1,17 +1,21 @@
 import * as GTP from '../Scripts_JS/GuessThePhrase.js';
 import { searchWords } from "../Services/api.js";
+import { useGame } from './GameContext.js';
 
 function WDButtons({
   word, curGameState, setCurGameState, curHint, setCurHint, hintVis, setHintVis, setAlphabetState, 
   setSelectedLetters, setUnavailableLetters, setCurAnswer, setTurnCount, setWord, freeLetters
 }) {
+
+  const {NewWord} = useGame();
+
   async function Hint() {
     const results = await searchWords(word.obj_word, "definitions"); // API Call
     setCurHint(results);
     setHintVis(!hintVis);
   }
 
-  function NewWord() {
+  /*function NewWord() {
     setAlphabetState(GTP.alphabet);
     setSelectedLetters({});
     setUnavailableLetters({});
@@ -22,7 +26,7 @@ function WDButtons({
     setUnavailableLetters(GTP.setLetters(freeLetters, GTP.alphabet));
     setCurAnswer(GTP.SetAnswerField([], tempWord.obj_word));
   }
-
+*/
   function GuessWord() {
     setCurGameState(curGameState === "GUESSING" ? "GAME" : "GUESSING");
   }
@@ -42,7 +46,7 @@ function WDButtons({
         New Word
       </button>
 
-      <button className="hint-btn" id="hint-btn" onClick={Hint}>
+      <button disabled={curGameState === "FINAL"} className="hint-btn" id="hint-btn" onClick={Hint}>
         Hint
       </button>
 

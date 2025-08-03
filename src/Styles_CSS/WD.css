@@ -79,6 +79,10 @@ main
     justify-self: center;
 
 } 
+.RESET{
+    background-color: #adff2f;
+    border-color: #adff2f;
+}
 button 
 {
     border-width: clamp(0.05em, 0.1em, 1em);
@@ -137,7 +141,8 @@ button
 .new-word-btn:active, 
 .guess-word-btn:active, 
 .submit-btn:active, 
-.undo-btn:active
+.undo-btn:active,
+.hint-btn:active
 {
     transition: ease-in .05s;
     z-index: 2;
@@ -156,7 +161,8 @@ button:disabled
 .new-word-btn:hover:not(:disabled):not(:active), 
 .guess-word-btn:hover:not(:disabled):not(:active), 
 .submit-btn:hover:not(:disabled):not(:active), 
-.undo-btn:hover:not(:disabled):not(:active)
+.undo-btn:hover:not(:disabled):not(:active),
+.hint-btn:hover:not(:disabled):not(:active)
 {
     animation: colorS2 linear .8s; 
     transform: scale(1.05);
@@ -164,7 +170,8 @@ button:disabled
 .new-word-btn:disabled, 
 .guess-word-btn:disabled,
 .undo-btn:disabled,
-.submit-btn:disabled
+.submit-btn:disabled,
+.hint-btn:disabled
 {
     background-color: grey;
     opacity: 50%;
