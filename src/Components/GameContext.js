@@ -7,7 +7,6 @@ const GameContext = createContext();
 
 export function GameProvider({ children }) {
   const {freeLetters, turnMax, ALPHABET } = GAME_CONFIG;
-
   const [word, setWord] = useState(GTP.GenerateWord());
   const [curGameState, setCurGameState] = useState("GAME");
   const [curHint, setCurHint] = useState("");
@@ -19,81 +18,99 @@ export function GameProvider({ children }) {
   const [turnCount, setTurnCount] = useState(turnMax);
   const [curFinalGuess, setCurFinalGuess] = useState([]);
 
-  function NewWord() {
-    setAlphabetState(ALPHABET);
+function NewWord() {
+  setAlphabetState(ALPHABET);
+  setSelectedLetters({});
+  setUnavailableLetters({});
+  setCurAnswer([]);
+  setTurnCount(turnMax);
+  const tempWord = GTP.GenerateWord();
+  setWord(tempWord);
+  setUnavailableLetters(GTP.setLetters(freeLetters, ALPHABET));
+  setCurAnswer(GTP.SetAnswerField([], tempWord.obj_word));
+  setCurGameState("GAME"); /// maybe put in use effect, or context for theme
+}
+
+
+function GuessWord() {
+  setCurGameState(curGameState === "GUESSING" ? "GAME" : "GUESSING");
+}
+
+
+function onAlphabetKeyBTN(e)
+{
+    setSelectedLetters((prev) =>({
+        ...prev, [e.target.id] : !prev[e.target.id]
+    })); 
+
+
+}
+function onAlphabetKey(e)
+{
+    setSelectedLetters((prev) =>({
+      ...prev, [e.key] : !prev[e.key]
+  })); 
+}
+function onEnterKey(){
+  SubmitFromGame();
+}
+function onBackspaceKey(){
+  
+    setSelectedLetters((prev) =>{
+      const keys = Object.keys(prev);
+      const k = keys[keys.length -1];
+      const {[k]:_, ...left} = prev;
+
+      //alert(JSON.stringify(left) +  JSON.stringify(prev));
+      return left;
+    }); 
+}
+
+function LetterClickedALT(e)
+{
+    setCurFinalGuess(() => [...curFinalGuess ,e.target.id].join("")); 
+}
+
+
+async function Hint() {
+  const results = await searchWords(word.obj_word, "definitions"); // API Call
+  setCurHint(results);
+  setHintVis(!hintVis);
+}
+
+function test()
+{
+  
+}
+
+function SubmitFromGame(){
+
+    if(Object.keys(selectedLetters).length > 0){ ///this functions uses old state of curanswer from useeffect need to create a way to make state the most recent
+    setUnavailableLetters((prev) =>({
+        ...prev, ...selectedLetters
+    })); 
     setSelectedLetters({});
-    setUnavailableLetters({});
-    setCurAnswer([]);
-    setTurnCount(turnMax);
-    const tempWord = GTP.GenerateWord();
-    setWord(tempWord);
-    setUnavailableLetters(GTP.setLetters(freeLetters, ALPHABET));
-    setCurAnswer(GTP.SetAnswerField([], tempWord.obj_word));
-    setCurGameState("GAME"); /// maybe put in use effect, or context for theme
-  }
+    }
+    setTurnCount(() => turnCount-1);
 
 
-  function GuessWord() {
-    setCurGameState(curGameState === "GUESSING" ? "GAME" : "GUESSING");
-  }
+}
 
 
-  function LetterClicked(e)
-  {
-      setSelectedLetters((prev) =>({
-          ...prev, [e.target.id] : !prev[e.target.id]
-      })); 
-  }
-
-
-  function LetterClickedALT(e)
-  {
-      setCurFinalGuess(() => [...curFinalGuess ,e.target.id].join("")); 
-  }
-
-
-  async function Hint() {
-    const results = await searchWords(word.obj_word, "definitions"); // API Call
-    setCurHint(results);
-    setHintVis(!hintVis);
-  }
-
-
-  function SubmitFromGame(){
-      const curAnswerString =  curAnswer.flat().join('');
-      const curWordString = word.obj_word
-  
-      if(Object.keys(selectedLetters).length > 0){ 
-      setUnavailableLetters((prev) =>({
-          ...prev, ...selectedLetters
-      })); 
-      setSelectedLetters({});
-      }
-      setTurnCount(() => turnCount-1);
-      if(curAnswerString === curWordString)
-      {
-          setCurGameState("RESET")
-      }
-  }
-
-
-  function SubmitFromFinal(){
-      if(curFinalGuess === word.obj_word)
-      {
-          alert("CORRECT" );
-          setCurGameState("RESET");
-          //set gamestate reset
-          //add theme context for states
-      }
-      else{
-          //alert("Wrong   " + curFinalGuess + "  " + word.obj_word)
-      }
-  }
-  
-
+function SubmitFromFinal(){
+    if(curFinalGuess === word.obj_word)
+    {
+        alert("CORRECT" );
+        setCurGameState("RESET");
+        //set gamestate reset
+        //add theme context for states
+    }
+    else{
+        //alert("Wrong   " + curFinalGuess + "  " + word.obj_word)
+    }
+}
 
 function debugbtn(){
-  //lert("hello ipsum")
 }
 
 
@@ -121,8 +138,11 @@ function debugbtn(){
         debugbtn,
         SubmitFromGame,
         SubmitFromFinal,
-        LetterClicked,
-        LetterClickedALT
+        onAlphabetKeyBTN,
+        LetterClickedALT,
+        onAlphabetKey,
+        onEnterKey, 
+        onBackspaceKey
       }}
     >
       {children}

@@ -15,3 +15,45 @@ export const GAME_CONFIG = {
     dictionaryEndpoint: 'https://api.dictionaryapi.dev/api/v2/entries/en'
   }
 };
+
+
+/*
+
+function goToFinal() {
+  setCurGameState(GAME_STATES.FINAL);
+  // Instead of relying on curGameState, act here
+  // because you know you are going to FINAL
+  startFinalTimer();
+} // use this and make a gamestate object so strings arent mispelled
+
+//Game
+
+initial state
+
+
+
+//Selecting
+entered from pressing a button
+
+
+
+
+//Guessing
+entered from pushing guess word button
+uses alternate hook for selected letters to not lose prior selected letters if choose to not submit
+
+
+
+//Final
+entered when all turns are used
+starts timer
+uses same hook from guess words for letter selection
+
+//Postsumbitions
+    -guess right
+
+
+    -gusswrong
+
+  pressing new word should reset all hooks and restart the gameplay loop
+*/

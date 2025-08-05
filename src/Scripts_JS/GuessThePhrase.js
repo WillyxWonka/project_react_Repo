@@ -1,7 +1,6 @@
 
 import wordBank from "../JSON/WordBank.json"
 
-let FreeLetters = 0;
 
 
 //sets initial state
@@ -13,12 +12,13 @@ export const SetAnswerField = (curAnswer, curWord) => {
     return  curAnswer.join("");
 }
 
+
 export const setLetters = (wd_FreeLetters, alphabetState) => {
-    FreeLetters = wd_FreeLetters;
+
     let freeLettersArray = [];
     let tempBet = alphabetState;
 
-    for(let i = 0; i < FreeLetters; i++)
+    for(let i = 0; i < wd_FreeLetters; i++)
     {
         let randLetter = Math.floor(Math.random() * tempBet.length); // get random value between array length
         freeLettersArray.push(tempBet[randLetter]);
@@ -69,4 +69,31 @@ export const updateanswer = (unavailableLetters, curWord, curAnswer) => {
 
 function GuessCorrect(){
     
+}
+
+
+
+
+
+export function BubbleSort()
+{
+
+    let list = [1,5,8,4,6,-2,-10,100,7,-7,8];
+    let i =1;
+    let k = 1;
+    alert(list);
+    while(k < list.length)
+    {
+        for(let j =i-1; i < list.length ; i++){
+            if(list[j] > list[i])
+            {
+                const tmp = list[i];
+                list[i] = list[j];
+                list[j] = tmp;
+            }
+        }
+        k++;
+        i = k;
+    }
+    alert(list);
 }
