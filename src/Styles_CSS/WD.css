@@ -1,4 +1,4 @@
-@keyframes colorS {
+@keyframes colorS{
     0% {
         background-color: #e1efff;
     }
@@ -11,7 +11,7 @@
         background-color: #e1efff;
     }
 }
-@keyframes colorS2 {
+@keyframes colorS2{
     0% {
         border-color: black;
     }
@@ -26,21 +26,15 @@
 /* Common Styles*/
 
 
-main
-{
-    margin: 10em auto;
+main{
+    margin: 7.5rem auto;
     width: fit-content; /* or a % */
-
 }
-.core-game-space
-{
+.core-game-space{
     text-align: center;
     justify-content: center;
-    
 }
-
-#FinalGuessInputFieldIndicator 
-{
+#FinalGuessInputFieldIndicator {
     text-align: center;
     border-width: .0925em;
     border-style: solid;
@@ -51,21 +45,17 @@ main
     margin-left: auto;
     margin-right: auto;
 }
-.new-word-btn, .guess-word-btn, .hint-btn
-{ 
+.new-word-btn, .guess-word-btn, .hint-btn{ 
     background-color: aquamarine; 
 }
-.submit-btn
-{ 
+.submit-btn{ 
     background-color: #adff2f; 
 }
-.undo-btn 
-{ 
+.undo-btn { 
     background-color: orangered 
 }
 
-.LetterButtons /*container for letterbuttons*/
-{
+.LetterButtons /*container for letterbuttons*/{
     box-shadow: -.125em .125em .125em black;
     background-color: #ffeee0;
     
@@ -77,14 +67,12 @@ main
     
     position: relative;
     justify-self: center;
-
 } 
 .RESET{
     background-color: #adff2f;
     border-color: #adff2f;
 }
-button 
-{
+button {
     border-width: clamp(0.05em, 0.1em, 1em);
     border-radius: 2em;
     border-color: black;
@@ -101,49 +89,40 @@ button
     z-index: 0;
     touch-action: manipulation;
 }
-.alphabetbtn
-{
+.alphabetbtn{
     border-style:outset;
     background-color: #e1efff;
 }
-.btn-selected
-{
+.btn-selected{
     opacity: 70%;
     transform: scale(.85);
     border-color: rgba(168, 255, 37, 1);
     background-color:  rgba(254, 225, 2, 0.5);
     color: rgba(0, 0, 0, 0.75);
 }
-.btn-selected:hover
-{
+.btn-selected:hover{
     color: rgb(0, 0, 0);
     opacity: 80%;
     transform: scale(.9);
 }
 .btn-unavailable{
-
     opacity: 65%;
     background-color: rgba(128, 128, 128, .8) !important;
     color: rgba(0, 0, 0, 1);
     border-color: rgb(100, 75, 13);
 }
-.btn-unavailable :active
-{
-    
-    
+.btn-unavailable :active{
+      
 }
-.btn-unselected:hover:not(:disabled):not(:active)
-{
+.btn-unselected:hover:not(:disabled):not(:active){
     animation: colorS linear .2s;
 }
-
 .btn-unselected:active,
 .new-word-btn:active, 
 .guess-word-btn:active, 
 .submit-btn:active, 
 .undo-btn:active,
-.hint-btn:active
-{
+.hint-btn:active{
     transition: ease-in .05s;
     z-index: 2;
     transform: scale(.85);
@@ -152,8 +131,7 @@ button
     opacity: 50%;
     cursor:grabbing;
 }
-button:disabled 
-{
+button:disabled {
     border-style: inset;
     transform: scale(0.85);
     border-color: #000;
@@ -162,8 +140,7 @@ button:disabled
 .guess-word-btn:hover:not(:disabled):not(:active), 
 .submit-btn:hover:not(:disabled):not(:active), 
 .undo-btn:hover:not(:disabled):not(:active),
-.hint-btn:hover:not(:disabled):not(:active)
-{
+.hint-btn:hover:not(:disabled):not(:active){
     animation: colorS2 linear .8s; 
     transform: scale(1.05);
 }
@@ -171,23 +148,25 @@ button:disabled
 .guess-word-btn:disabled,
 .undo-btn:disabled,
 .submit-btn:disabled,
-.hint-btn:disabled
-{
+.hint-btn:disabled{
     background-color: grey;
     opacity: 50%;
 }
-#Timer 
-{
+#Timer {
     position:relative;
     color: orangered;
     top: 10%;
 }
-.game-info > div
-{
+.TimerOn{
+    visibility: visible;
+}
+.TimerOff{
+    visibility: hidden;
+}
+.game-info > div{
     opacity: 75%;
 }
-#DataSourceString /* might be effecting strange layout inconsistancies with game info container */
-{
+#DataSourceString /* might be effecting strange layout inconsistancies with game info container */{
     position: fixed;
     bottom: 0;
     left: 0;
@@ -197,41 +176,33 @@ button:disabled
 
 
 /* Portrait */
-@media screen and (orientation: portrait) 
-{
+@media screen and (orientation: portrait) {
 }
 
 /* Landscape */
-@media screen and (orientation: landscape)
- {
+@media screen and (orientation: landscape){
 
-    #LetterButtonsHeader 
-    {
+    #LetterButtonsHeader{
         font-size: clamp(1rem, 2.25vw, 2rem); 
         color: black;
         font-weight: bold;
     }
-    
-    .alphabetbtn
-    {
+    .alphabetbtn{
         font-size: clamp(.75rem, 1.125vw, 1.5rem); 
         text-align: center;
         position: relative;
         margin: 2% 0% 2% 1.5%;      
         touch-action: manipulation;
     }
-    .main-buttons * , .secondary-buttons *
-    {
+    .main-buttons * , .secondary-buttons *{
         color: black;
         font-size: clamp(1rem, 1.25vw, 2rem); 
         border-style: solid;
     }
-    .secondary-buttons
-    {
+    .secondary-buttons{
         margin-top: 2%;
     }
-    #Phrase 
-    {
+    #Phrase{
         margin-bottom: 1%;
         text-align: center;
         color: #171717;
@@ -240,8 +211,7 @@ button:disabled
         font-size: clamp(1rem, 2.75vw, 2rem); 
         font-weight: bold;
     }
-    #CorrectLetters 
-    {
+    #CorrectLetters{
         font-size: clamp(1rem, 2.5vw, 2rem); 
 
         text-align: center;
@@ -249,14 +219,13 @@ button:disabled
         letter-spacing: 2ch;
         margin-bottom: 1%;
     }
-    #FinalGuessInputFieldIndicator 
-    {
+    #FinalGuessInputFieldIndicator{
         font-size: clamp(1rem, 1.125vw, 2rem); 
         max-width: 30%;
         width: 100%;        
         height: clamp(1rem,1.25vw,2rem);
     }
-    .game-info {
+    .game-info{
         margin-top: 2%;
         display: flex;
         flex-wrap: wrap;
@@ -264,17 +233,14 @@ button:disabled
         gap: clamp(0.5rem, 2vw, 1.5rem);
         
         justify-content: center;
-        align-items: center;
-        
+        align-items: center;     
     }
-
-    .game-info > div {
+    .game-info > div{
         padding: 0.125em 0.5em;
         border-radius: 0.5em;
         background-color: whitesmoke;
         flex: 0 1 auto;
         width: fit-content;
         text-align: center;
-
     }
 }

@@ -4,50 +4,46 @@ import '../Styles_CSS/WD.css';
 import * as GTP from '../Scripts_JS/GuessThePhrase.js';
 import { useGame } from '../Components/GameContext.js';
 import {GAME_CONFIG } from '../Scripts_JS/gameConfig.js';
+import GTP_Timer from "../Components/GTP_Timer.jsx";
 
 function WordDecoder(){
-const{ALPHABET, Difficulty} = GAME_CONFIG;
+const{ALPHABET, Difficulty, GAME_STATES} = GAME_CONFIG;
   
 const { word, curGameState, setCurGameState,curHint, hintVis, alphabetState, setAlphabetState,selectedLetters,unavailableLetters, 
 setUnavailableLetters,curAnswer, setCurAnswer,turnCount, setTurnCount,freeLetters, NewWord, Hint,GuessWord, debugbtn, SubmitFromFinal, 
-SubmitFromGame, curFinalGuess, setCurFinalGuess, onAlphabetKeyBTN, LetterClickedALT,onAlphabetKey, onEnterKey, onBackspaceKey} = useGame(); //Context // separate this out
+SubmitFromGame, curFinalGuess, setCurFinalGuess, onAlphabetKeyBTN, LetterClickedALT,onAlphabetKey, onEnterKey, onBackspaceKey, curDifficulty, 
+setCurDifficulty} = useGame(); //Context // separate this out
 
 const [buttonState, setButtonState] = useState({});
 const [points, setPoints] = useState(0);
 const hasRun = useRef(false);
 
+
 useEffect(() =>{
   function handleKeyDown(e){
-
     switch(e.key){
         case 'Enter':
             e.preventDefault();
             SubmitFromGame();
         break;
-
         case 'Backspace':
             e.preventDefault();
             onBackspaceKey();
         break;
-
         default:
         if (/^\p{Letter}$/u.test(e.key)) {
             onAlphabetKey(e); 
         }
     }
   }
-
   window.addEventListener('keydown', handleKeyDown);
   return () => window.removeEventListener('keydown', handleKeyDown);
 }, [onAlphabetKey, SubmitFromGame, onBackspaceKey]);
 
-
 //watches cur answer
 useEffect(() =>{
 
-    // skip if curAnswer is not an array
-    if (Array.isArray(curAnswer)){   
-
+    if (Array.isArray(curAnswer)){// skip if curAnswer is not an array
         const curAnswerString =  curAnswer.flat().join('');
         const curWordString = word.obj_word;
 
@@ -59,13 +55,12 @@ useEffect(() =>{
     }
 },[curAnswer])
 
-
 //watches curGamestate and runs code on specific state
 useEffect(() => {
     switch(curGameState)
     {
         case "GAME":
-            setCurFinalGuess([]);
+            //setCurFinalGuess([]);
             break;
         case "FINAL":
             //start timer
@@ -78,7 +73,7 @@ useEffect(() => {
     }
 }, [curGameState]); 
 
-//disables button when added to unavailable state//watches unavailabletters
+//watches unavailabletters --- separate this into a function in a different file, there is too many setter within the use effect.
 useEffect(() => {
     setButtonState({
         ...unavailableLetters  
@@ -90,19 +85,23 @@ useEffect(() => {
             {return false;}
             else return true;
     }));
+
     setCurAnswer(GTP.updateanswer(unavailableLetters, word.obj_word, curAnswer)); 
 }, [unavailableLetters])
-//sets turncount
+
+//Watches TurnCount
 useEffect(() => {
     if(turnCount === 0){
+        // create function that triggers on exausting all turns
+        GTP.OnGameStateFINAL(setCurGameState);
         setTurnCount(0);
-        setCurGameState("FINAL");
-        return;
     }
 }, [turnCount])
+
 //runs once at mount
 useEffect(() => {
     if(!hasRun.current){
+        setCurDifficulty(GTP.SetDifficulty(Difficulty));
         setUnavailableLetters(GTP.setLetters(freeLetters, alphabetState));
         setCurAnswer(GTP.SetAnswerField(curAnswer, word.obj_word));
         hasRun.current = true;
@@ -115,7 +114,6 @@ return(
     <Header> Standard Mode! </Header>
     <button onClick={debugbtn}>debug</button>
     <main>
-
         <div className="FinalGuessInputCont">
             <div id = "FinalGuessInputFieldIndicator">{curFinalGuess}</div>
         </div>
@@ -124,8 +122,8 @@ return(
         <div id="CorrectLetters">{curAnswer}</div>
 
         <div id="" style={{textAlign: 'center'}}>
-            Test Unavailable Letters:{<span style={{color: 'goldenrod'}}>
-                {Object.keys(unavailableLetters)}__{word.obj_word}___{alphabetState}             
+            Unavailable Letters : Word : alphabetState : Difficulty : Selected Letters{<span style={{color: 'goldenrod'}}>
+                {Object.keys(unavailableLetters)}__{word.obj_word}___{alphabetState}__{curDifficulty}__{Object.keys(selectedLetters)}             
             </span>}
             </div>  
         
@@ -133,7 +131,11 @@ return(
             <section className="LetterButtons" id="LetterButtons">
 
                 <div id="LetterButtonsHeader"></div>
-                <div id='Timer' aria-label="Timer">Timer</div>  
+
+                <div id='Timer' aria-label="Timer" className={curGameState === GAME_STATES.FINAL ? "TimerOn" : "TimerOff"} name="time" 
+                 style={{display: 'flex', margin: '0 auto', justifyContent: 'center', fontWeight: 'bolder', fontSize:'1.5rem'}}>
+                    Final Guess Ends: <GTP_Timer />!
+                </div>
 
                 {curGameState === "GAME" ? //this should theoretically work when FINAL gamestate is initiated
                     ALPHABET?.map((letter, index) =>(
@@ -166,8 +168,8 @@ return(
                 </section>    
 
             </section>
-
         </section>
+
         <section className="secondary-buttons">
             <button
                 className="guess-word-btn"
@@ -177,7 +179,7 @@ return(
             >
             {curGameState === "GUESSING" ? "Return" : "Guess Word" }
             </button>
-            <button className="new-word-btn" id="new-word-btn" onClick={NewWord} disabled={curGameState === "FINAL"}>
+            <button className="new-word-btn" id="new-word-btn" onClick={NewWord} disabled={curGameState === GAME_STATES.FINAL}>
                 New Word
             </button>
             <button className="hint-btn" id="hint-btn" onClick={Hint}>
@@ -185,29 +187,25 @@ return(
             </button>
             <textarea value={curHint} disabled={hintVis}></textarea>
         </section>
-
+        <aside aria-label="Game information, stats">
+            <div className="game-info"> 
+                <div id='TurnsUsed' aria-label="Turns info">
+                    Turns: {turnCount}
+                </div>   
+                <div id='Points' aria-label="Points info">
+                    Points: {points}
+                </div>  
+                <div id='curDifficulty' aria-label="Difficulty info">
+                    Difficulty: {curDifficulty || "undefined in GAME-CONFIG"}
+                </div>  
+                <div id='FreeLetters' aria-label="Free Letters info">
+                    Free Letters: {freeLetters}
+                </div>  
+            </div>
+        </aside>
     </main>
-    
-    <aside aria-label="Game information, stats">
-        <div className="game-info"> 
-            <div id='TurnsUsed' aria-label="Turns info">
-                Turns: {turnCount}
-            </div>   
-            <div id='Points' aria-label="Points info">
-                Points: {points}
-            </div>  
-            <div id='curDifficulty' aria-label="Difficulty info">
-                Difficulty: {Difficulty[0]}
-            </div>  
-            <div id='FreeLetters' aria-label="Free Letters info">
-                Free Letters: {freeLetters}
-            </div>  
-        </div>
-    </aside>
 
-    <div id="DataSourceString" aria-hidden="true"> 
-        Easy
-    </div>  
+    <div id="DataSourceString" aria-hidden="true"> Easy</div>  
     </>
     );
 }

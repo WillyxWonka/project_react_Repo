@@ -1,61 +1,45 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useGame } from '../Components/GameContext.js';
+import { GAME_CONFIG } from "../Scripts_JS/gameConfig.js";
 
 function GTP_Timer(){
 
-const [timeState, setTimeState] = useState(5000);
-const [timerOn, setTimerOn] = useState(false);
+const {curGameState} = useGame();
+const {GAME_STATES} = GAME_CONFIG;
+
+const [timeState, setTimeState] = useState(0);
 const intervalRef =useRef(null);
 let boool = false;
 
-function FormatTime()
-{
-    let minutes = Math.floor(timeState/(1000 * 60) %60).toString()
-    .padStart(2, "0");
-    let seconds = Math.floor(timeState/(1000) %60).toString()
-    .padStart(2, "0");
-    let millisec = Math.floor((timeState%1000)/10).toString()
-    .padStart(2, "0");
-    return `${minutes}:${seconds}:${millisec}` ;
-}
+  function FormatTime(){
+      let seconds = Math.floor(timeState/(1000) %60).toString().padStart(1, "0");
+      let millisec = Math.floor((timeState%1000)/10).toString().padStart(2, "0");
+      return `${seconds}:${millisec}`}
 
-function startTimer(val)
-{
-  boool = true;
-  if(boool){
-    intervalRef.current = setInterval(() =>
-    {
-      setTimeState((tState) => {    
-        
-        if(tState <= 0){ 
-          boool=false;
-          setTimeState(5000)
-          clearInterval(intervalRef.current); }
-      return tState - 10 })}, 10);
-      setTimeState(val);
-  }
-}
+  function startTimer(val){
+    boool = true;
+    if(boool){
+      intervalRef.current = setInterval(() =>{
+        setTimeState((tState) => {    
+          if(tState <= 0){ 
+            boool=false;
+            setTimeState(0)
+            clearInterval(intervalRef.current); 
+          }
+        return tState - 10 })}, 10);
 
-/* useEffect(() =>{
-  if(timerOn){
-    intervalRef.current = setInterval(() =>
-    {
-      setTimeState((tState) => {    
-        
-        if(tState <= 0){ 
-          setTimerOn(false)
-          clearInterval(intervalRef.current);
-            return }
+        setTimeState(val);
+    }};
 
-      return tState - 10 })}, 10);\
-}}, []); */
-
+  useEffect(() =>{
+    if(curGameState === GAME_STATES.FINAL){
+      startTimer(10000);
+    }
+  }, [curGameState]);
 
   return(
     <>
-    <button onClick={() => startTimer(5000)}> press</button>
-      <div name="time" style={{display: 'flex', margin: '0 auto', justifyContent: 'center', fontWeight: 'bolder', fontSize:'1.5rem'}}>
-        Timer: {FormatTime()}
-      </div>
+      {FormatTime()}
     </>
   )
 }
